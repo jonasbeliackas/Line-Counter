@@ -1,0 +1,9 @@
+# ninja log v5
+2	782	7005217021017132	CMakeFiles/Line_Counter.dir/main.cpp.obj	dbef494b33d4fc1b
+1	101	7005223030414326	build.ninja	88079d250de3ed70
+6	799	7004415088645208	CMakeFiles/Line_Counter.dir/line_counter.cpp.obj	260d0bf996f46ea4
+318	398	7004315673257902	Line_Counter.exe	6fdc7d0c53f19cc8
+782	997	7005217023145418	../Line_Counter.exe	4e38ddce910d589a
+9	499	7004357651419723	CMakeFiles/Line_Counter.dir/thread_pool.cpp.obj	29ac2e22863d7c31
+5	1241	7005179262840575	CMakeFiles/Line_Counter.dir/ThreadPool.cpp.obj	e3f08eed123909ca
+6	1561	7005214339098625	CMakeFiles/Line_Counter.dir/LineCounter.cpp.obj	140cb63215c50efc

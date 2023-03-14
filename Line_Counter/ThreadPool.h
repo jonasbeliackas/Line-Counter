@@ -10,8 +10,8 @@
 #include <condition_variable>
 #include <thread>
 #include <functional>
-#include <future>
 #include <iostream>
+#include <future>
 
 class ThreadPool {
 public:
@@ -21,16 +21,16 @@ public:
                     [this] {
                         while(true) {
                             std::function<void()> task;
-                            {
-                                std::unique_lock<std::mutex> lock(this->queue_mutex);
-                                this->condition.wait(lock, [this] { return this->stop || !this->tasks.empty(); });
-                                if (this->stop && this->tasks.empty()) {
-                                    return;
-                                }
-//                            std::cout<<std::this_thread::get_id()<<std::endl;
-                                task = std::move(this->tasks.front());
-                                this->tasks.pop();
+
+                            std::unique_lock<std::mutex> lock(this->queue_mutex);
+                            this->condition.wait(lock, [this] { return this->stop || !this->tasks.empty(); });
+                            if (this->stop && this->tasks.empty()) {
+                                return;
                             }
+//                            std::cout<<std::this_thread::get_id()<<std::endl;
+                            task = std::move(this->tasks.front());
+                            this->tasks.pop();
+                            lock.unlock();
                             task();
                             taskCounter--;
                         }
@@ -48,15 +48,15 @@ public:
     template<typename Func, typename... Args>
     void enqueue(Func&& func, Args&&... args) {
         auto task = std::make_shared<std::packaged_task<void()>>(std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
-        {
-            std::unique_lock<std::mutex> lock(queue_mutex);
 
-            if (stop) {
-                throw std::runtime_error("enqueue on stopped ThreadPool");
-            }
+        std::unique_lock<std::mutex> lock(queue_mutex);
 
-            tasks.emplace([task]() { (*task)(); });
+        if (stop) {
+            throw std::runtime_error("enqueue on stopped ThreadPool");
         }
+
+        tasks.emplace([task]() { (*task)(); });
+
         condition.notify_one();
         taskCounter++;
     }
